@@ -11,7 +11,7 @@ pub fn parse(input: &str) -> Vec<Report> {
 
 pub fn part1(input: Vec<Report>) -> usize {
     input
-        .iter()
+        .into_iter()
         .filter(|r| {
             let mut e = r.iter();
             let mut l = match e.next() {
@@ -44,7 +44,7 @@ pub fn part1(input: Vec<Report>) -> usize {
 
 pub fn part2(input: Vec<Report>) -> usize {
     input
-        .iter()
+        .into_iter()
         .filter(|r| {
             let mut e = r.into_iter();
             let mut l = match e.next() {
