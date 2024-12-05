@@ -1,6 +1,8 @@
 use std::collections::BTreeMap;
 
-pub fn parse(input: &str) -> (Vec<u32>, Vec<u32>) {
+type Locations = (Vec<u32>, Vec<u32>);
+
+pub fn parse(input: &str) -> Locations {
     input
         .lines()
         .filter_map(|line| {
@@ -18,7 +20,7 @@ pub fn parse(input: &str) -> (Vec<u32>, Vec<u32>) {
         .collect()
 }
 
-pub fn part1(mut input: (Vec<u32>, Vec<u32>)) -> u32 {
+pub fn part1(mut input: Locations) -> u32 {
     input.0.sort();
     input.1.sort();
     Iterator::zip(input.0.into_iter(), input.1.into_iter())
@@ -26,7 +28,7 @@ pub fn part1(mut input: (Vec<u32>, Vec<u32>)) -> u32 {
         .sum()
 }
 
-pub fn part2(input: (Vec<u32>, Vec<u32>)) -> u32 {
+pub fn part2(input: Locations) -> u32 {
     let mut cache = BTreeMap::<u32, u32>::new();
     input.1.into_iter().for_each(|e| {
         cache.entry(e).and_modify(|c| *c += 1).or_insert(1);
@@ -48,8 +50,8 @@ mod tests {
             "/inputs/day1/part1/input1.txt"
         ));
         let input = parse(raw);
-        let part1 = part1(input);
-        assert_eq!(part1, 11)
+        let result = part1(input);
+        assert_eq!(result, 11)
     }
 
     #[test]
@@ -59,8 +61,8 @@ mod tests {
             "/inputs/day1/part1/input2.txt"
         ));
         let input = parse(raw);
-        let part1 = part1(input);
-        assert_eq!(part1, 2769675)
+        let result = part1(input);
+        assert_eq!(result, 2769675)
     }
 
     #[test]
@@ -70,8 +72,8 @@ mod tests {
             "/inputs/day1/part2/input1.txt"
         ));
         let input = parse(raw);
-        let part1 = part2(input);
-        assert_eq!(part1, 31)
+        let result = part2(input);
+        assert_eq!(result, 31)
     }
 
     #[test]
@@ -81,7 +83,7 @@ mod tests {
             "/inputs/day1/part2/input2.txt"
         ));
         let input = parse(raw);
-        let part1 = part2(input);
-        assert_eq!(part1, 24643097)
+        let result = part2(input);
+        assert_eq!(result, 24643097)
     }
 }
