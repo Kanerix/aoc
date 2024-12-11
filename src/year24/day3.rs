@@ -23,26 +23,39 @@ pub fn part1(input: Vec<&str>) -> u32 {
         .sum::<u32>()
 }
 
-pub fn part2(input: Vec<&str>) -> u32 {
+pub fn part2(input: Vec<&str>) -> u64 {
     static REGEX: OnceLock<Regex> = OnceLock::new();
     let re = REGEX.get_or_init(|| {
-        Regex::new(r"mul\((:?\d{1,3}),(:?\d{1,3})\)").unwrap()
+        Regex::new(r"mul\((:?\d{1,3}),(:?\d{1,3})\)|do\(\)|don't\(\)").unwrap()
     });
 
-    input.iter().map(|l| {
-        let mut mul = false;
-        re.captures_iter(l).filter_map(|c| {
-                if mul {
-                    return None
-                }
+    let mut skip = false;
 
-                let a = c[1].parse::<u32>().ok()?;
-                let b = c[2].parse::<u32>().ok()?;
-                return Some(a*b)
-            })
-            .sum::<u32>()
+    input.iter().map(|l| {
+        re.captures_iter(l).filter_map(|c| {
+            match &c[0] {
+                "do()" => {
+                    skip = false;
+                    None
+                },
+                "don't()" => {
+                    skip = true;
+                    None
+                },
+                _ => {
+                    if skip {
+                        return None
+                    }
+
+                    let a = c[1].parse::<u64>().ok()?;
+                    let b = c[2].parse::<u64>().ok()?;
+                    Some(a*b)
+                }
+            }
         })
-        .sum::<u32>()
+        .sum::<u64>()
+    })
+    .sum::<u64>()
 }
 
 #[cfg(test)]
@@ -57,7 +70,7 @@ mod tests {
         ));
         let input = parse(raw);
         let result = part1(input);
-        assert_eq!(result, 48)
+        assert_eq!(result, 161)
     }
 
     #[test]
@@ -68,7 +81,7 @@ mod tests {
         ));
         let input = parse(raw);
         let result = part1(input);
-        assert_eq!(result, 306)
+        assert_eq!(result, 170807108)
     }
 
     #[test]
@@ -79,7 +92,7 @@ mod tests {
         ));
         let input = parse(raw);
         let result = part2(input);
-        assert_eq!(result, 4)
+        assert_eq!(result, 48)
     }
 
     #[test]
@@ -90,6 +103,6 @@ mod tests {
         ));
         let input = parse(raw);
         let result = part2(input);
-        assert_eq!(result, 381)
+        assert_eq!(result, 1)
     }
 }
