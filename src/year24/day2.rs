@@ -14,6 +14,7 @@ pub fn part1(input: Vec<Report>) -> usize {
         .iter()
         .filter(|r| {
             let mut e = r.iter();
+
             let mut l = match e.next() {
                 Some(v) => v,
                 None => return false,
@@ -30,7 +31,7 @@ pub fn part1(input: Vec<Report>) -> usize {
                     ord = Some(l.cmp(c));
                 }
 
-                if !(1..4).contains(&(l - c).abs()) {
+                if !(0..4).contains(&(l - c).abs()) {
                     return false;
                 }
 
