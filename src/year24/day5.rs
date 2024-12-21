@@ -46,7 +46,7 @@ pub fn part2(input: Vec<Report>) -> usize {
     input
         .into_iter()
         .filter(|r| {
-            let mut e = r.into_iter();
+            let mut e = r.iter();
             let mut l = match e.next() {
                 Some(v) => v,
                 None => return false,
@@ -94,11 +94,11 @@ mod tests {
     fn part1_input1() {
         let raw = include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/inputs/day2/input1.txt"
+            "/inputs/day5/input1.txt"
         ));
         let input = parse(raw);
         let result = part1(input);
-        assert_eq!(result, 2)
+        assert_eq!(result, 999)
     }
 
     #[test]

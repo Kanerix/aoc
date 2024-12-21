@@ -31,8 +31,8 @@ pub fn part2(input: Vec<&str>) -> u64 {
 
     let mut skip = false;
 
-    input.iter().map(|l| {
-        re.captures_iter(l).filter_map(|c| {
+    input.iter().map(|line| {
+        re.captures_iter(line).filter_map(|c| {
             match &c[0] {
                 "do()" => {
                     skip = false;

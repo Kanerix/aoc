@@ -3,16 +3,15 @@ use std::collections::BTreeMap;
 type Locations = (Vec<u32>, Vec<u32>);
 
 pub fn parse(input: &str) -> Locations {
-    input
-        .lines()
+    input.lines()
         .filter_map(|line| {
-            let mut l = line
+            let mut parts = line
                 .split(" ")
                 .filter_map(|x| x.parse().ok())
                 .collect::<Vec<u32>>()
                 .into_iter();
 
-            match (l.next(), l.next()) {
+            match (parts.next(), parts.next()) {
                 (Some(l1), Some(l2)) => Some((l1, l2)),
                 _ => None,
             }
@@ -23,8 +22,8 @@ pub fn parse(input: &str) -> Locations {
 pub fn part1(mut input: Locations) -> u32 {
     input.0.sort();
     input.1.sort();
-    Iterator::zip(input.0.into_iter(), input.1.into_iter())
-        .map(|(a, b)| u32::abs_diff(a, b))
+    Iterator::zip(input.0.iter(), input.1.iter())
+        .map(|(a, b)| u32::abs_diff(*a, *b))
         .sum()
 }
 
@@ -33,10 +32,7 @@ pub fn part2(input: Locations) -> u32 {
     input.1.into_iter().for_each(|e| {
         cache.entry(e).and_modify(|c| *c += 1).or_insert(1);
     });
-    input.0.into_iter().filter_map(|e| match cache.get(&e) {
-        Some(v) => Some(e * *v),
-        None => None,
-    }).sum()
+    input.0.into_iter().filter_map(|e| cache.get(&e).map(|v| e * *v)).sum()
 }
 
 #[cfg(test)]

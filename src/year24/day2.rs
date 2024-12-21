@@ -3,15 +3,13 @@ use std::cmp::Ordering;
 type Report = Vec<i32>;
 
 pub fn parse(input: &str) -> Vec<Report> {
-    input
-        .lines()
+    input.lines()
         .map(|l| l.split(' ').filter_map(|e| e.parse().ok()).collect())
         .collect()
 }
 
 pub fn part1(input: Vec<Report>) -> usize {
-    input
-        .iter()
+    input.iter()
         .filter(|r| {
             let mut e = r.iter();
 
@@ -44,47 +42,60 @@ pub fn part1(input: Vec<Report>) -> usize {
 }
 
 pub fn part2(input: Vec<Report>) -> usize {
-    input
-        .iter()
-        .filter(|r| {
-            let mut e = r.into_iter();
-            let mut l = match e.next() {
+    input.into_iter()
+        .filter(|report| {
+            let (failed_1, failed_2) = match try_parse_report(report.clone()) {
                 Some(v) => v,
-                None => return false,
+                None => return true,
             };
 
-            let mut ord: Option<Ordering> = None;
-            let mut skip_available = true;
+            match try_parse_report(failed_1) {
+                Some(_) => (),
+                None => return true,
+            };
 
-            for c in e {
-                if let Some(o) = ord {
-                    if l.cmp(c) != o {
-                        if skip_available {
-                            skip_available = false;
-                            ord = None;
-                            continue;
-                        }
-                        return false
-                    }
-                } else {
-                    ord = Some(l.cmp(c));
-                }
+            match try_parse_report(failed_2) {
+                Some(_) => (),
+                None => return true,
+            };
 
-                if !(1..4).contains(&(l - c).abs()) {
-                    if skip_available {
-                        skip_available = false;
-                        l = c;
-                        continue;
-                    }
-                    return false
-                }
-
-                l = c;
-            }
-
-            true
+            false
         })
         .count()
+}
+
+fn try_parse_report(report: Report) -> Option<(Report, Report)> {
+    let mut element = report.iter().enumerate();
+
+    let (_, mut last) = element.next()?;
+
+    let mut ord: Option<Ordering> = None;
+
+    for (i, curr) in element {
+        if let Some(ord) = ord {
+            if last.cmp(curr) != ord {
+                return Some(failed_report(report, i));
+            }
+        } else {
+            ord = Some(last.cmp(curr));
+        }
+
+        if !(0..4).contains(&(last - curr).abs()) {
+            return Some(failed_report(report, i));
+        }
+
+        last = curr;
+    }
+
+    None
+}
+
+fn failed_report(report: Report, i: usize) -> (Report, Report) {
+    let mut report_1 = report.clone();
+    report_1.remove(i);
+    let mut report_2 = report;
+    report_2.remove(i - 1);
+    (report_1, report_2)
 }
 
 #[cfg(test)]
